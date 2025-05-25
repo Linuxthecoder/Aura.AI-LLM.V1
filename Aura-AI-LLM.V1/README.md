@@ -16,7 +16,7 @@
   <a href="https://x.com/nexoraglbco" target="_blank">
   <img alt="X (Twitter)" src="https://img.shields.io/badge/X-@nexoraglbco-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white"/>
 </a>
-<a href="mailto:nexora.ai@gmail.com">
+<a href="mailto:contact.nexora.org@gmail.com">
   <img alt="Email" src="https://img.shields.io/badge/Contact-Email-D14836?style=for-the-badge&logo=gmail&logoColor=white"/>
 </a>
 
