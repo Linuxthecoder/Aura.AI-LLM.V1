@@ -14,11 +14,12 @@
     <img alt="About Nexora" src="https://img.shields.io/badge/About-Nexora-0078d7?style=for-the-badge&logo=info&logoColor=white"/>
   </a>
   <a href="https://twitter.com/nexora_ai" target="_blank">
-  <img alt="Twitter" src="https://img.shields.io/badge/Twitter-@nexora_ai-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white"/>
+  <img alt="Twitter" src="https://img.shields.io/badge/Twitter-@nexoraglbco-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white"/>
 </a>
 <a href="mailto:nexora.ai@gmail.com">
   <img alt="Email" src="https://img.shields.io/badge/Contact-Email-D14836?style=for-the-badge&logo=gmail&logoColor=white"/>
 </a>
+
 </div>
 
 ---
