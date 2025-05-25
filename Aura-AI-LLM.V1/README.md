@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://nexora-com.onrender.com/">
-    <img src="https://nexora-com.onrender.com/assets/logo.svg" alt="Nexora Logo" width="40%" />
+    <img src="https://github.com/Linuxthecoder/Nexora-Official.Website/blob/main/assets/nexoralogo.svg" alt="Nexora Logo" width="40%" />
   </a>
 </div>
 
