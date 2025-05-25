@@ -1,69 +1,72 @@
-# DeepSeek-V3 Weight File Documentation
+# Aura AI – Prototype V1 Weight File Documentation
+
+> Developed by **Nexora.ai**, Aura AI is an experimental LLM designed for intelligent interaction and multimodal reasoning.  
+> **This documentation covers the weight structure and configuration details of the first prototype (v1)**.
+
+---
 
 ## New Fields in `config.json`
 
-- **model_type**: Specifies the model type, which is updated to `deepseek_v3` in this release.
-- **num_nextn_predict_layers**: Indicates the number of Multi-Token Prediction (MTP) Modules. The open-sourced V3 weights include **1 MTP Module** .
-- **quantization_config**: Describes the configuration for FP8 quantization.
+- **model_type**: Specifies the model type, now set to `aura_v1`.
+- **num_nextn_predict_layers**: Indicates the number of Multi-Token Prediction (MTP) modules. The prototype v1 includes **1 MTP module**.
+- **quantization_config**: Describes the configuration for FP8 quantization (used for performance optimization).
 
 ---
 
 ## Weight Structure Overview
 
-The DeepSeek-V3 weight file consists of two main components: **Main Model Weights** and **MTP Modules**.
+The Aura AI prototype weight file consists of two main components: **Main Model Weights** and **MTP Modules**.
 
 ### 1. Main Model Weights
 
 - **Composition**:
-  - Input/output embedding layers and a complete set of 61 Transformer hidden layers.
+  - Includes embedding layers and 61 Transformer hidden layers.
 - **Parameter Count**:
   - Total parameters: **671B**
-  - Activation parameters: **36.7B** (including 0.9B for Embedding and 0.9B for the output Head).
+  - Activation parameters: **36.7B** (including 0.9B for the embedding and 0.9B for the output head)
 
 #### Structural Details
 
 - **Embedding Layer**:
   - `model.embed_tokens.weight`
-- **Transformer Hidden Layers**:
-  - `model.layers.0` to `model.layers.60`, totaling `num_hidden_layers` layers.
+- **Transformer Layers**:
+  - `model.layers.0` through `model.layers.60`
 - **Output Layer**:
   - `model.norm.weight`
   - `lm_head.weight`
 
-### 2. Multi-Token Prediction (MTP) Modules
+### 2. Multi-Token Prediction (MTP) Module
 
 - **Composition**:
-  - Additional MTP Modules defined by the `num_nextn_predict_layers` field. In this model, the value is set to 1.
+  - Includes an extra transformer layer and associated normalization and projection modules.
 - **Parameter Count**:
-  - Parameters: **11.5B unique parameters**, excluding the shared 0.9B Embedding and 0.9B output Head).
-  - Activation parameters: **2.4B** (including the shared 0.9B Embedding and 0.9B output Head).
+  - Parameters: **11.5B unique**, excluding the shared 0.9B Embedding and 0.9B output Head.
+  - Activation parameters: **2.4B** (shared values included)
 
 #### Structural Details
 
-- **embed_tokens**: **Shares parameters** with the Embedding layer of the Main Model weights.
-- **enorm & hnorm**: RMSNorm parameters required for speculative decoding.
-- **eh_proj**: Parameters for dimensionality reduction projection on the norm results.
-- **Additional Transformer Hidden Layer**:
-  - `model.layers.61.self_attn & mlp` (structure identical to the Main Model hidden layers).
-- **shared_head**: **Shares parameters** with the output Head of the Main Model weights.
+- **embed_tokens**: Shared with the main model.
+- **enorm & hnorm**: RMSNorm layers for speculative decoding.
+- **eh_proj**: Projection parameters.
+- **Extra Transformer Layer**:
+  - `model.layers.61.self_attn` and `model.layers.61.mlp`
+- **shared_head**: Shared with main model output head.
 
 ---
 
-### Loading Rules
+## Loading Rules
 
-- **Main Model Weights**: Loaded via the `num_hidden_layers` parameter in `config.json`.
-- **MTP Modules**: Loaded via the `num_nextn_predict_layers` parameter, with layer IDs appended immediately after the Main Model hidden layers. For example:
-  - If `num_hidden_layers = 61` and `num_nextn_predict_layers = 1`, the MTP Module's layer ID is `61`.
+- **Main Model**: Controlled via the `num_hidden_layers` value in `config.json`.
+- **MTP Module**: Controlled via the `num_nextn_predict_layers` value.
+  - If `num_hidden_layers = 61` and `num_nextn_predict_layers = 1`, the MTP layer uses index `61`.
 
 ---
 
-## FP8 Weight Documentation
+## FP8 Weight Format
 
-DeepSeek-V3 natively supports FP8 weight format with 128x128 block scaling.
+Aura AI v1 supports FP8 quantization with efficient memory and compute usage via 128x128 block scaling.
 
 ### FP8 Configuration
-
-The FP8 weight file introduces a `quantization_config` field to describe the quantization method. Below is an example configuration:
 
 ```json
 "quantization_config": {
@@ -72,23 +75,3 @@ The FP8 weight file introduces a `quantization_config` field to describe the qua
   "quant_method": "fp8",
   "weight_block_size": [128, 128]
 }
-```
-
-- **Quantization Format**:
-  - Format type: `fp8` and `e4m3` (corresponding to `torch.float8_e4m3fn`).
-  - Weight block size: `128x128`.
-- **Activation Quantization Scheme**:
-  - Utilizes dynamic activation quantization (`dynamic`).
-
-### Dequantization Method
-
-The FP8 weight file includes a `weight_scale_inv` field, which stores the dequantization scale for each weight block.
-
-- **Storage Format**: `float32 Tensor`, stored alongside the weight data.
-- **Dequantization Formula**:
-  - If the weight block is not aligned to 128, it is zero-padded to 128 before calculating the scale. After quantization, the padded portion is removed.
-  - The dequantization process is performed as: `(128x128 weight block) * weight_scale_inv`.
-
-Through dequantization of the FP8 weights, runtime operations enable online quantization at a granularity of `per-token-per-128-channel`.
-
----
